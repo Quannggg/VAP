@@ -14,7 +14,7 @@ import io
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO)
 logger = logging.getLogger(__name__)
-def send_chart(update: Update, context: CallbackContext) -> None:
+async def send_chart(update: Update, context: CallbackContext) -> None:
     if context.args:
         coin_name = context.args[0].lower()
         coin_info = get_coin_info(coin_name)
@@ -46,14 +46,14 @@ def send_chart(update: Update, context: CallbackContext) -> None:
             plt.savefig(buf, format='png', dpi=300)
             buf.seek(0)
 
-            update.message.reply_photo(photo=buf)
+            await update.message.reply_photo(photo=buf)
 
             buf.close()
             plt.clf()
         else:
-            update.message.reply_text(f"Sorry, I couldn't fetch the data for {coin_name}.")
+            await update.message.reply_text(f"Sorry, I couldn't fetch the data for {coin_name}.")
     else:
-        update.message.reply_text("Please specify a coin name. Usage: /send_chart <coinname>")
+        await update.message.reply_text("Please specify a coin name. Usage: /chart <coinname>")
 
 def get_coin_info(coin_name):
     """Fetch detailed information about a cryptocurrency from the CoinGecko API."""
@@ -67,7 +67,7 @@ def get_coin_info(coin_name):
         logger.error(f"Error fetching data for {coin_name}: {e}")
         return None
 
-def data(update: Update, context: CallbackContext) -> None:
+async def data(update: Update, context: CallbackContext) -> None:
     if context.args:
         coin_name = context.args[0].lower()
         coin_info = get_coin_info(coin_name)
@@ -89,29 +89,8 @@ def data(update: Update, context: CallbackContext) -> None:
             message += f"Homepage: {coin_info['links']['homepage'][0]}\n"
             message += f"Blockchain Site: {coin_info['links']['blockchain_site'][0]}\n"
             message += f"Official Forum: {coin_info['links']['official_forum_url'][0]}"
-            update.message.reply_text(message)
+            await update.message.reply_text(message)
         else:
-            update.message.reply_text("Sorry, I couldn't fetch the data for that coin.")
+            await update.message.reply_text("Sorry, I couldn't fetch the data for that coin.")
     else:
-        update.message.reply_text("Please specify a coin name. Usage: /data <coinname>")
-
-def main():
-    """Start the bot."""
-    # Create the Updater and pass it your bot's token.
-    updater = Updater("6939427821:AAEOcXAdV-SqFjobA4nYzjbL_STTw5sxRXc")
-
-    # Get the dispatcher to register handlers
-    dp = updater.dispatcher
-
-    # On different commands - answer in Telegram
-    dp.add_handler(CommandHandler("data", data))
-    dp.add_handler(CommandHandler("chart", send_chart))
-
-    # Start the Bot
-    updater.start_polling()
-
-    # Run the bot until you press Ctrl-C or the process receives SIGINT, SIGTERM or SIGABRT.
-    updater.idle()
-
-if __name__ == '__main__':
-    main()
+        await update.message.reply_text("Please specify a coin name. Usage: /data <coinname>")

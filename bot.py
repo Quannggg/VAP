@@ -4,7 +4,7 @@ import requests
 import os
 from dotenv import load_dotenv
 load_dotenv()
-
+import realTime
 
 url = 'localhost:3000'
 
@@ -35,10 +35,12 @@ async def check_balance(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
 
 async def help(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text("Usage: /check_balance <public_key>")
-TELEGRAM_TOKEN =''
+TELEGRAM_TOKEN ='7058333666:AAHcrQf9rK6-3fGLwORkbx0Bopwek2q4-Vk'
 app = ApplicationBuilder().token(TELEGRAM_TOKEN).build()
 
 app.add_handler(CommandHandler("hello", hello))
 app.add_handler(CommandHandler("check_balance", check_balance))
 app.add_handler(CommandHandler("help", help))
+app.add_handler(CommandHandler("data", realTime.data))
+app.add_handler(CommandHandler("chart", realTime.send_chart))
 app.run_polling()
