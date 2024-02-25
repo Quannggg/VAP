@@ -9,6 +9,8 @@ __pycache__/
 # Distribution / packaging
 .Python
 build/
+.idea
+.idea/*
 develop-eggs/
 dist/
 downloads/
@@ -19,6 +21,7 @@ lib64/
 parts/
 sdist/
 var/
+bun.lockb
 wheels/
 share/python-wheels/
 *.egg-info/
