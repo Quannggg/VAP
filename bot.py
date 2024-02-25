@@ -8,13 +8,49 @@ import solRag
 load_dotenv()
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_KEY")
 
+map_coin = {
+    "btc": "bitcoin",
+    "eth": "ethereum",
+    "sol": "solana",
+    "ada": "cardano",
+    "bnb": "binancecoin",
+    "usdt": "tether",
+    "xrp": "ripple",
+    "doge": "dogecoin",
+    "dot": "polkadot",
+    "usdc": "usd-coin",
+    "uni": "uniswap",
+    "bch": "bitcoin-cash",
+    "ltc": "litecoin",
+    "link": "chainlink",
+    "matic": "polygon",
+    "xlm": "stellar",
+    "vet": "vechain",
+    "cro": "crypto-com-chain",
+    "trx": "tron",
+    "fil": "filecoin",
+    "ftt": "ftx-token",
+    "theta": "theta-token"
+}
+
 
 url = 'localhost:3000'
-
+server_url = 'http://112.137.129.161:6789/imagine?prompt='
 
 def get_balance(public_key):
     response = requests.get(f'http://{url}/balance/{public_key}')
     return response.json()['balance']
+
+async def gen_image(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    args = context.args
+    if len(args) == 0:
+        await update.message.reply_text("Please provide a prompt to generate an image")
+        return
+    prompt = " ".join(args)
+    response = requests.get(server_url + prompt)
+    await update.message.reply_photo(response.content)  
+
+
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -55,6 +91,7 @@ async def check_balance(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
 
 async def help(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     message = """Usage:
+                /check_balance <public_key> - Check balance
                 /check_balance <public_key> - Check the balance of a Solana account
                 /hello - Say hello
                 /askSolana - Ask something about Solana
@@ -62,13 +99,13 @@ async def help(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                 /chart - Send a chart
                 """
     await update.message.reply_text(message)
-
 app = ApplicationBuilder().token(TELEGRAM_TOKEN).build()
 
 app.add_handler(CommandHandler("hello", hello))
 app.add_handler(CommandHandler("check_balance", check_balance))
 app.add_handler(CommandHandler("askSolana", askSolana))
 app.add_handler(CommandHandler("help", help))
+app.add_handler(CommandHandler("gen_image", gen_image))
 app.add_handler(CommandHandler("data", realTime.data))
 app.add_handler(CommandHandler("chart", realTime.send_chart))
 app.run_polling()

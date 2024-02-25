@@ -99,6 +99,7 @@ prompt = hub.pull("rlm/rag-prompt")
 
 llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0)
 
+
 rag_chain_from_docs = (
         RunnablePassthrough.assign(context=(lambda x: format_docs(x["context"])))
         | prompt
