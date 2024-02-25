@@ -34,7 +34,6 @@ async def askSolana(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text(response)
 
 
-
 async def hello(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text(f'Hello {update.effective_user.first_name} vap')
 
@@ -55,8 +54,14 @@ async def check_balance(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
 
 
 async def help(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await update.message.reply_text("""Usage: /check_balance <public_key>""")
-
+    message = """Usage:
+                /check_balance <public_key> - Check the balance of a Solana account
+                /hello - Say hello
+                /askSolana - Ask something about Solana
+                /data - Get real-time value coin 
+                /chart - Send a chart
+                """
+    await update.message.reply_text(message)
 
 app = ApplicationBuilder().token(TELEGRAM_TOKEN).build()
 
