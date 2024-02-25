@@ -1,10 +1,13 @@
+import realTime
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 import requests
 import os
 from dotenv import load_dotenv
+import solRag
 load_dotenv()
-import realTime
+TELEGRAM_TOKEN = os.getenv("TELEGRAM_KEY")
+
 
 url = 'localhost:3000'
 
@@ -12,6 +15,24 @@ url = 'localhost:3000'
 def get_balance(public_key):
     response = requests.get(f'http://{url}/balance/{public_key}')
     return response.json()['balance']
+
+
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    await update.message.reply_text(
+        "Welcome to the Solana Cookbook Bot! You can use /help to see the available commands."
+    )
+
+
+async def askSolana(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    args = context.args
+    if len(args) == 0:
+        await update.message.reply_text("Please provide a question")
+        return
+
+    question = " ".join(args)
+    response = solRag.get_response(question)
+    await update.message.reply_text(response)
+
 
 
 async def hello(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -34,12 +55,14 @@ async def check_balance(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
 
 
 async def help(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await update.message.reply_text("Usage: /check_balance <public_key>")
-TELEGRAM_TOKEN ='7058333666:AAHcrQf9rK6-3fGLwORkbx0Bopwek2q4-Vk'
+    await update.message.reply_text("""Usage: /check_balance <public_key>""")
+
+
 app = ApplicationBuilder().token(TELEGRAM_TOKEN).build()
 
 app.add_handler(CommandHandler("hello", hello))
 app.add_handler(CommandHandler("check_balance", check_balance))
+app.add_handler(CommandHandler("askSolana", askSolana))
 app.add_handler(CommandHandler("help", help))
 app.add_handler(CommandHandler("data", realTime.data))
 app.add_handler(CommandHandler("chart", realTime.send_chart))
