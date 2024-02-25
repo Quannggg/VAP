@@ -8,7 +8,30 @@ import matplotlib.pyplot as plt
 
 import pandas as pd
 import io 
-
+map_coin = {
+    "btc": "bitcoin",
+    "eth": "ethereum",
+    "sol": "solana",
+    "ada": "cardano",
+    "bnb": "binancecoin",
+    "usdt": "tether",
+    "xrp": "ripple",
+    "doge": "dogecoin",
+    "dot": "polkadot",
+    "usdc": "usd-coin",
+    "uni": "uniswap",
+    "bch": "bitcoin-cash",
+    "ltc": "litecoin",
+    "link": "chainlink",
+    "matic": "polygon",
+    "xlm": "stellar",
+    "vet": "vechain",
+    "cro": "crypto-com-chain",
+    "trx": "tron",
+    "fil": "filecoin",
+    "ftt": "ftx-token",
+    "theta": "theta-token"
+}
 
 # Enable logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -17,6 +40,7 @@ logger = logging.getLogger(__name__)
 async def send_chart(update: Update, context: CallbackContext) -> None:
     if context.args:
         coin_name = context.args[0].lower()
+        coin_name = map_coin.get(coin_name, coin_name)
         coin_info = get_coin_info(coin_name)
         if coin_info:
             changes = {
@@ -70,6 +94,7 @@ def get_coin_info(coin_name):
 async def data(update: Update, context: CallbackContext) -> None:
     if context.args:
         coin_name = context.args[0].lower()
+        coin_name = map_coin.get(coin_name, coin_name)
         coin_info = get_coin_info(coin_name)
         if coin_info:
             # Crafting a detailed message. Adjust according to your needs to avoid exceeding message length limits.
